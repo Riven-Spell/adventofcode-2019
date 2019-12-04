@@ -1,8 +1,10 @@
 package solutions
 
 import (
+	"context"
 	"fmt"
 	"github.com/Virepri/adventofcode-2019/util"
+	"runtime"
 	"strconv"
 	"strings"
 )
@@ -62,34 +64,64 @@ func (s *Day2Input) Part1() string {
 }
 
 func (s *Day2Input) Part2() string {
-	noun, verb := 0, 0
+	// Start by firing up a channel and yeeting in every possible noun and verb.
+	// X = noun Y = verb
+	instructionChan := make(chan util.Point, runtime.NumCPU() * 2)
+	searchCtx, Canceller := context.WithCancel(context.Background())
 
-	increment := func() {
-		noun++
+	go func() {
+		noun, verb := 0, 0
 
-		if noun > 99 {
-			verb++
-			noun = 0
+		instructionChan <- util.Point{X: 0, Y: 0}
+
+		increment := func() {
+			noun++
+
+			if noun > 99 {
+				verb++
+				noun = 0
+			}
+
+			if verb > 99 {
+				panic("solution should have been found already!")
+			}
 		}
 
-		if verb > 99 {
-			panic("solution should have been found already!")
+		for verb < 99 {
+			increment()
+			instructionChan <- util.Point{X: noun, Y: verb}
 		}
+	}()
+
+	var result util.Point
+
+	for i := runtime.NumCPU(); i > 0; i-- {
+		go func() {
+			for {
+				var instruction util.Point
+				select {
+				case instruction = <- instructionChan:
+				case <-searchCtx.Done():
+					return
+				}
+
+				in := Day2Input{}
+
+				in.Prepare(s.baseStr)
+				in.Noun = instruction.X
+				in.Verb = instruction.Y
+
+				in.Part1()
+				if in.Memory[0] == 19690720 {
+					result = instruction
+					Canceller()
+					return
+				}
+			}
+		}()
 	}
 
-	reset := func() {
-		s.Prepare(s.baseStr)
-		increment()
-		s.Noun = noun
-		s.Verb = verb
-	}
+	<-searchCtx.Done()
 
-	for ; ; reset() {
-		s.Part1()
-		if s.Memory[0] == 19690720 {
-			break
-		}
-	}
-
-	return strconv.Itoa((100 * noun) + verb)
+	return strconv.Itoa((100 * result.X) + result.Y)
 }
