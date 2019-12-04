@@ -27,4 +27,8 @@ var RegisteredDays = []struct{
 		DummyInput: &Day3Input{},
 		StringInput: &inputs.Day3Data,
 	},
+	{ // Day 4
+		DummyInput: &Day4Input{},
+		StringInput: &inputs.Day4Data,
+	},
 }
