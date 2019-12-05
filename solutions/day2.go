@@ -2,7 +2,7 @@ package solutions
 
 import (
 	"context"
-	"fmt"
+	"github.com/Virepri/adventofcode-2019/solutions/intcode"
 	"github.com/Virepri/adventofcode-2019/util"
 	"runtime"
 	"strconv"
@@ -10,7 +10,7 @@ import (
 )
 
 type Day2Input struct{
-	Memory       map[int]int // This is actually just acting as an unbound array.
+	intcode.VM
 	baseStr      string
 	CustNounVerb bool // Set to true during preparation, considered when running parts.
 	Noun int // Default set to 12
@@ -18,6 +18,7 @@ type Day2Input struct{
 }
 
 func (s *Day2Input) Prepare(input string) {
+	s.VM = intcode.VM{}
 	s.Memory = make(map[int]int)
 	s.baseStr = input
 
@@ -47,18 +48,16 @@ func (s *Day2Input) Part1() string {
 		s.Memory[2] = s.Verb
 	}
 
-	for i := 0; s.Memory[i] != 99; i += 4 {
-		switch s.Memory[i] {
-		case 1:
-			s.Add(s.Memory[i+1], s.Memory[i+2], s.Memory[i+3])
-		case 2:
-			s.Mul(s.Memory[i+1],s.Memory[i+2],s.Memory[i+3])
-		case 99:
-			fmt.Println("Intcode didn't expect to run 99")
-		default:
-			panic(strconv.Itoa(s.Memory[i]) + " is not a valid opcode")
-		}
+	s.BlacklistedOps = map[int]bool{
+		3:true,
+		4:true,
+		5:true,
+		6:true,
+		7:true,
+		8:true,
 	}
+
+	s.Autorun()
 
 	return strconv.Itoa(s.Memory[0])
 }
