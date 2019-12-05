@@ -36,7 +36,7 @@ func main() {
 				tx := time.Now().Sub(t) // runtime
 
 				fmt.Println("Day " + strconv.Itoa(k + 1) + " Part 1 (runtime: " + tx.String() + ")")
-				fmt.Println(o)
+				fmt.Println(o + " " + util.TernaryString(o == v.ExpectedOutputs[0], "(PASSED)", "(FAILED: " + v.ExpectedOutputs[0] + ")"))
 
 				// Reset the input
 				v.DummyInput.Prepare(*v.StringInput)
@@ -45,7 +45,7 @@ func main() {
 				tx = time.Now().Sub(t)
 
 				fmt.Println("Day " + strconv.Itoa(k + 1) + " Part 2 (runtime: " + tx.String() + ")")
-				fmt.Println(o)
+				fmt.Println(o + " " + util.TernaryString(o == v.ExpectedOutputs[1], "(PASSED)", "(FAILED: " + v.ExpectedOutputs[1] + ")"))
 			}
 			tx := time.Now().Sub(packetStart)
 
@@ -81,7 +81,7 @@ func main() {
 				tx := time.Now().Sub(t)
 
 				fmt.Println("Part 1 (runtime: " + tx.String() + ")")
-				fmt.Println("Result:\n" + o)
+				fmt.Println(o + " " + util.TernaryString(o == daysolution.ExpectedOutputs[0], "(PASSED)", "(FAILED: " + daysolution.ExpectedOutputs[0] + ")"))
 				daysolution.DummyInput.Prepare(*daysolution.StringInput) // Some days modify their input.
 
 				t = time.Now()
@@ -89,21 +89,21 @@ func main() {
 				tx = time.Now().Sub(t)
 
 				fmt.Println("Part 2 (runtime: " +  tx.String() + ")")
-				fmt.Println("Result:\n" + o)
+				fmt.Println(o + " " + util.TernaryString(o == daysolution.ExpectedOutputs[1], "(PASSED)", "(FAILED: " + daysolution.ExpectedOutputs[1] + ")"))
 			case 1:
 				t := time.Now()
 				o := daysolution.DummyInput.Part1()
 				tx := time.Now().Sub(t)
 
 				fmt.Println("Part 1 (runtime: " + tx.String() + ")")
-				fmt.Println("Result:\n" + o)
+				fmt.Println(o + " " + util.TernaryString(o == daysolution.ExpectedOutputs[0], "(PASSED)", "(FAILED: " + daysolution.ExpectedOutputs[0] + ")"))
 			case 2:
 				t := time.Now()
 				o := daysolution.DummyInput.Part2()
 				tx := time.Now().Sub(t)
 
 				fmt.Println("Part 2 (runtime: " +  tx.String() + ")")
-				fmt.Println("Result:\n" + o)
+				fmt.Println(o + " " + util.TernaryString(o == daysolution.ExpectedOutputs[1], "(PASSED)", "(FAILED: " + daysolution.ExpectedOutputs[1] + ")"))
 			default:
 				printHelp()
 			}

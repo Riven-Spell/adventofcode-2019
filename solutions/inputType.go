@@ -14,21 +14,31 @@ type PerDayInput interface {
 var RegisteredDays = []struct{
 	DummyInput PerDayInput
 	StringInput *string
+	ExpectedOutputs []string
 }{
 	{ // Day 1
 		DummyInput: &Day1Input{},
 		StringInput: &inputs.Day1Data,
+		ExpectedOutputs: []string{"3363033", "5041680"},
 	},
 	{ // Day 2
 		DummyInput: &Day2Input{},
 		StringInput: &inputs.Day2Data,
+		ExpectedOutputs: []string{"3716250", "6472"},
 	},
 	{ // Day 3
 		DummyInput: &Day3Input{},
 		StringInput: &inputs.Day3Data,
+		ExpectedOutputs: []string{"1195", "91518"},
 	},
 	{ // Day 4
 		DummyInput: &Day4Input{},
 		StringInput: &inputs.Day4Data,
+		ExpectedOutputs: []string{"1675", "1142"},
+	},
+	{ // Day 5
+		DummyInput: &Day5Input{},
+		StringInput: &inputs.Day5Data,
+		ExpectedOutputs: []string {"7157989", "7873292"},
 	},
 }

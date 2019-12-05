@@ -2,6 +2,7 @@ package tests
 
 import (
 	"github.com/Virepri/adventofcode-2019/solutions"
+	"github.com/Virepri/adventofcode-2019/util"
 	chk "gopkg.in/check.v1"
 )
 
@@ -56,7 +57,7 @@ func (s *Day4TestSuite) TestDay4Validator(c *chk.C) {
 	for _,v := range inputs {
 		c.Log("(exact: ", v.exact, ") Code ", v.code, " is valid? ", v.valid)
 
-		isValid := dummyInput.Verify(dummyInput.ByDigit(v.code), v.exact)
+		isValid := dummyInput.Verify(util.ByDigit(v.code), v.exact)
 		c.Log("Validator says: ", isValid)
 		c.Assert(isValid, chk.Equals, v.valid)
 	}
@@ -71,10 +72,10 @@ func (s *Day4TestSuite) TestDay4Incrementor(c *chk.C) {
 
 	dummyInput := solutions.Day4Input{}
 	for _,v := range inputs {
-		digs := dummyInput.ByDigit(v)
+		digs := util.ByDigit(v)
 		dummyInput.IncrementCode(digs)
 
-		c.Assert(dummyInput.DigitsToInt(digs), chk.Equals, v + 1)
+		c.Assert(util.DigitsToInt(digs), chk.Equals, v + 1)
 	}
 }
 
@@ -95,10 +96,10 @@ func (s *Day4TestSuite) TestDay4Perfector(c *chk.C) {
 
 	dummyInput := solutions.Day4Input{}
 	for _,v := range inputs {
-		digs := dummyInput.ByDigit(v.original)
+		digs := util.ByDigit(v.original)
 		dummyInput.MakePerfect(digs)
 
-		c.Log("Machine perfected: ", dummyInput.DigitsToInt(digs), " Expected: ", v.perfected)
-		c.Assert(dummyInput.DigitsToInt(digs), chk.Equals, v.perfected)
+		c.Log("Machine perfected: ", util.DigitsToInt(digs), " Expected: ", v.perfected)
+		c.Assert(util.DigitsToInt(digs), chk.Equals, v.perfected)
 	}
 }

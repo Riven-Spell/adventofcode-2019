@@ -81,10 +81,6 @@ func (s *Day2Input) Part2() string {
 				verb++
 				noun = 0
 			}
-
-			if verb > 99 {
-				panic("solution should have been found already!")
-			}
 		}
 
 		for verb < 99 {

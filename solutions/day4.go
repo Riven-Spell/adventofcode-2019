@@ -2,7 +2,6 @@ package solutions
 
 import (
 	"github.com/Virepri/adventofcode-2019/util"
-	"math"
 	"strconv"
 	"strings"
 )
@@ -19,27 +18,6 @@ func (s *Day4Input) Prepare(input string) {
 	util.PanicIfErr(err)
 	s.Max, err = strconv.ParseInt(i[1], 10, 64)
 	util.PanicIfErr(err)
-}
-
-func (s *Day4Input) ByDigit(x int64) (out []int) {
-	out = make([]int, 0)
-
-	for _,v := range strings.Split(strconv.Itoa(int(x)), "") {
-		x, _ := strconv.ParseInt(v, 10, 64)
-		out = append(out, int(x))
-	}
-
-	return
-}
-
-func (s *Day4Input) DigitsToInt(x []int) (out int64) {
-	for k,v := range x {
-		digit := int64(math.Pow10(len(x) - (k+1)))
-
-		out += int64(v) * digit
-	}
-
-	return
 }
 
 func (s *Day4Input) IncrementCode(code []int) {
@@ -112,13 +90,13 @@ func (s *Day4Input) Verify(code []int, onlyTwo bool) bool {
 
 func (s *Day4Input) Part1() string {
 	// First, let's segment our minimum input.
-	minDig := s.ByDigit(s.Min)
-	maxDig := s.ByDigit(s.Max)
+	minDig := util.ByDigit(s.Min)
+	maxDig := util.ByDigit(s.Max)
 
 	s.MakePerfect(minDig)
 
 	valid := 0
-	for s.DigitsToInt(minDig) < s.DigitsToInt(maxDig) {
+	for util.DigitsToInt(minDig) < util.DigitsToInt(maxDig) {
 
 		if s.Verify(minDig, false) {
 			valid++
@@ -133,13 +111,13 @@ func (s *Day4Input) Part1() string {
 
 func (s *Day4Input) Part2() string {
 	// First, let's segment our minimum input.
-	minDig := s.ByDigit(s.Min)
-	maxDig := s.ByDigit(s.Max)
+	minDig := util.ByDigit(s.Min)
+	maxDig := util.ByDigit(s.Max)
 
 	s.MakePerfect(minDig)
 
 	valid := 0
-	for s.DigitsToInt(minDig) < s.DigitsToInt(maxDig) {
+	for util.DigitsToInt(minDig) < util.DigitsToInt(maxDig) {
 
 		if s.Verify(minDig, true) {
 			valid++
