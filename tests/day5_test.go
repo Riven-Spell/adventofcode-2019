@@ -93,11 +93,13 @@ func (s *Day5TestSuite) TestDay5VMExtensions(c *chk.C) {
 	}
 
 	for _,v := range inputs {
-		vm := intcode.VM{Memory:util.MapifyIntList(v.memory), Ioutil: intcode.Ioutil{Stdin: []int{v.input}}}
+		vm := intcode.VM{Memory:util.MapifyIntList(v.memory), IoMgr: &intcode.PreparedIO{Stdin: []int{v.input}}}
 
 		vm.Autorun()
 
-		c.Log("Got output chain: ", vm.Ioutil.Stdout, " Expected only output: ", v.result)
-		c.Assert(vm.Ioutil.Stdout[0], chk.Equals, v.result)
+		io := vm.IoMgr.(*intcode.PreparedIO)
+
+		c.Log("Got output chain: ", io.Stdout, " Expected only output: ", v.result)
+		c.Assert(io.Stdout[0], chk.Equals, v.result)
 	}
 }

@@ -43,7 +43,7 @@ var OperationMap = map[int]IntcodeOperation {
 		DefaultArgMode: []int{1},
 		F: func(args []int, vm *VM) bool {
 			//mem[args[0]] = buf.Pop()
-			vm.Memory[args[0]] = vm.Ioutil.Read()
+			vm.Memory[args[0]] = vm.IoMgr.Read()
 			return true
 		},
 	},
@@ -51,7 +51,7 @@ var OperationMap = map[int]IntcodeOperation {
 		ArgCount:       1,
 		DefaultArgMode: []int{0},
 		F: func(args []int, vm *VM) bool {
-			vm.Ioutil.Write(args[0])
+			vm.IoMgr.Write(args[0])
 			return true
 		},
 	},

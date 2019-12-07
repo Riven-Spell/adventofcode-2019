@@ -22,12 +22,15 @@ func (s *Day5Input) Prepare(input string) {
 
 		s.Memory[k] = int(pi)
 	}
+
+	s.IoMgr = &intcode.PreparedIO{}
 }
 
 func (s *Day5Input) Part1() string {
+	io := s.IoMgr.(*intcode.PreparedIO)
 	// input the ID needed, reset stdout
-	s.Ioutil.Stdin = []int{1}
-	s.Ioutil.Stdout = []int{}
+	io.Stdin = []int{1}
+	io.Stdout = []int{}
 	// Blacklist all part 2 functions
 	s.BlacklistedOps = map[int]bool{
 		5:true,
@@ -38,15 +41,16 @@ func (s *Day5Input) Part1() string {
 
 	s.Autorun()
 
-	return fmt.Sprint(s.Ioutil.Stdout[len(s.Ioutil.Stdout)-1])
+	return fmt.Sprint(io.Stdout[len(io.Stdout)-1])
 }
 
 func (s *Day5Input) Part2() string {
+	io := s.IoMgr.(*intcode.PreparedIO)
 	// input the ID needed, reset stdout
-	s.Ioutil.Stdin = []int{5}
-	s.Ioutil.Stdout = []int{}
+	io.Stdin = []int{5}
+	io.Stdout = []int{}
 
 	s.Autorun()
 
-	return fmt.Sprint(s.Ioutil.Stdout[len(s.Ioutil.Stdout)-1])
+	return fmt.Sprint(io.Stdout[len(io.Stdout)-1])
 }

@@ -6,10 +6,21 @@ import (
 )
 
 type VM struct {
-	PC int
+	PC             int
 	BlacklistedOps map[int]bool
-	Memory map[int]int // This is actually just acting as an unbound array.
-	Ioutil Ioutil
+	Memory         map[int]int // This is actually just acting as an unbound array.
+	IoMgr          IoMgr
+}
+
+// Reset fully resets the ioutil state-- be sure to replace it.
+func (v *VM) Reset(baseMem map[int]int) {
+	v.Memory = make(map[int]int)
+	v.PC = 0
+	v.IoMgr = &PreparedIO{}
+
+	for loc, value := range baseMem {
+		v.Memory[loc] = value
+	}
 }
 
 func (v *VM) GetMemory(i int) int {
@@ -56,12 +67,19 @@ func (v *VM) Autorun() {
 	for v.Step() {}
 }
 
+func (v *VM) AutorunWIndex(idx int) {
+	for v.Step() {
+		fmt.Println("VM ", idx, "is running", v.PC, v.Memory[v.PC])
+	}
+}
+
 // False: Running still.
 // True: The VM has stopped.
 func (v *VM) Step() bool {
 	var argModes []int
 	var opCode int
 	var o IntcodeOperation
+	var ok bool
 
 	if v.Memory[v.PC] > 99 {
 		// TODO: Cache these.
@@ -69,7 +87,7 @@ func (v *VM) Step() bool {
 		codeDiv := len(digs)-2
 		opCode = int(util.DigitsToInt(digs[codeDiv:]))
 
-		o = OperationMap[opCode]
+		o, ok = OperationMap[opCode]
 
 		// Copy the default arg mode so we don't overwrite it
 		overrideModes := digs[:codeDiv]
@@ -82,9 +100,13 @@ func (v *VM) Step() bool {
 	} else {
 		opCode = v.Memory[v.PC]
 
-		o = OperationMap[opCode]
+		o, ok = OperationMap[opCode]
 
 		argModes = o.DefaultArgMode
+	}
+
+	if !ok {
+		panic(fmt.Sprint(opCode, "is not a valid opcode."))
 	}
 
 	if _, ok := v.BlacklistedOps[opCode]; ok {

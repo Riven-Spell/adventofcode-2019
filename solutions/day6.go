@@ -57,6 +57,7 @@ func (s *Day6Input) Part2() string {
 	for ok {
 		obj, ok = s.Orbits[obj]
 
+		// Why check our distance before we add? Because this distance we'd miss here is already accounted for in the overlap.
 		if dist, ok := dmap[obj]; ok {
 			return fmt.Sprint(distance + dist)
 		}
