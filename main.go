@@ -36,7 +36,11 @@ func main() {
 				tx := time.Now().Sub(t) // runtime
 
 				fmt.Println("Day " + strconv.Itoa(k + 1) + " Part 1 (runtime: " + tx.String() + ")")
-				fmt.Println(o + " " + util.TernaryString(o == v.ExpectedOutputs[0], "(PASSED)", "(FAILED: " + v.ExpectedOutputs[0] + ")"))
+				if v.ExpectedOutputs[0] != "disabled" {
+					fmt.Println(o + " " + util.TernaryString(o == v.ExpectedOutputs[0], "(PASSED)", "(FAILED: "+v.ExpectedOutputs[0]+")"))
+				} else {
+					fmt.Println(o)
+				}
 
 				// Reset the input
 				v.DummyInput.Prepare(*v.StringInput)
@@ -45,7 +49,11 @@ func main() {
 				tx = time.Now().Sub(t)
 
 				fmt.Println("Day " + strconv.Itoa(k + 1) + " Part 2 (runtime: " + tx.String() + ")")
-				fmt.Println(o + " " + util.TernaryString(o == v.ExpectedOutputs[1], "(PASSED)", "(FAILED: " + v.ExpectedOutputs[1] + ")"))
+				if v.ExpectedOutputs[1] != "disabled" {
+					fmt.Println(o + " " + util.TernaryString(o == v.ExpectedOutputs[1], "(PASSED)", "(FAILED: "+v.ExpectedOutputs[1]+")"))
+				} else {
+					fmt.Println(o)
+				}
 			}
 			tx := time.Now().Sub(packetStart)
 
@@ -58,6 +66,7 @@ func main() {
 			util.PanicIfErr(err)
 
 			daysolution := solutions.RegisteredDays[day-1]
+			dataset := false
 
 			if len(os.Args) >= 3 {
 				f, err := os.Open(os.Args[2])
@@ -69,6 +78,7 @@ func main() {
 				util.PanicIfErr(err)
 
 				*daysolution.StringInput = buf.String()
+				dataset = true
 			}
 
 			daysolution.DummyInput.Prepare(*daysolution.StringInput)
@@ -81,7 +91,11 @@ func main() {
 				tx := time.Now().Sub(t)
 
 				fmt.Println("Part 1 (runtime: " + tx.String() + ")")
-				fmt.Println(o + " " + util.TernaryString(o == daysolution.ExpectedOutputs[0], "(PASSED)", "(FAILED: " + daysolution.ExpectedOutputs[0] + ")"))
+				if !dataset && daysolution.ExpectedOutputs[0] != "disabled" {
+					fmt.Println(o + " " + util.TernaryString(o == daysolution.ExpectedOutputs[0], "(PASSED)", "(FAILED: "+daysolution.ExpectedOutputs[0]+")"))
+				} else {
+					fmt.Println(o)
+				}
 				daysolution.DummyInput.Prepare(*daysolution.StringInput) // Some days modify their input.
 
 				t = time.Now()
@@ -89,21 +103,33 @@ func main() {
 				tx = time.Now().Sub(t)
 
 				fmt.Println("Part 2 (runtime: " +  tx.String() + ")")
-				fmt.Println(o + " " + util.TernaryString(o == daysolution.ExpectedOutputs[1], "(PASSED)", "(FAILED: " + daysolution.ExpectedOutputs[1] + ")"))
+				if !dataset && daysolution.ExpectedOutputs[1] != "disabled" {
+					fmt.Println(o + " " + util.TernaryString(o == daysolution.ExpectedOutputs[1], "(PASSED)", "(FAILED: "+daysolution.ExpectedOutputs[1]+")"))
+				} else {
+					fmt.Println(o)
+				}
 			case 1:
 				t := time.Now()
 				o := daysolution.DummyInput.Part1()
 				tx := time.Now().Sub(t)
 
 				fmt.Println("Part 1 (runtime: " + tx.String() + ")")
-				fmt.Println(o + " " + util.TernaryString(o == daysolution.ExpectedOutputs[0], "(PASSED)", "(FAILED: " + daysolution.ExpectedOutputs[0] + ")"))
+				if !dataset && daysolution.ExpectedOutputs[0] != "disabled" {
+					fmt.Println(o + " " + util.TernaryString(o == daysolution.ExpectedOutputs[0], "(PASSED)", "(FAILED: "+daysolution.ExpectedOutputs[0]+")"))
+				} else {
+					fmt.Println(o)
+				}
 			case 2:
 				t := time.Now()
 				o := daysolution.DummyInput.Part2()
 				tx := time.Now().Sub(t)
 
 				fmt.Println("Part 2 (runtime: " +  tx.String() + ")")
-				fmt.Println(o + " " + util.TernaryString(o == daysolution.ExpectedOutputs[1], "(PASSED)", "(FAILED: " + daysolution.ExpectedOutputs[1] + ")"))
+				if !dataset && daysolution.ExpectedOutputs[1] != "disabled" {
+					fmt.Println(o + " " + util.TernaryString(o == daysolution.ExpectedOutputs[1], "(PASSED)", "(FAILED: "+daysolution.ExpectedOutputs[1]+")"))
+				} else {
+					fmt.Println(o)
+				}
 			default:
 				printHelp()
 			}
