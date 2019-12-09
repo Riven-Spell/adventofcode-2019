@@ -1,10 +1,10 @@
 package util
 
-func MapifyIntList(in []int) map[int]int {
-	out := make(map[int]int)
+func MapifyIntList(in []int64) map[int64]int64 {
+	out := make(map[int64]int64)
 
 	for k,v := range in {
-		out[k] = v
+		out[int64(k)] = v
 	}
 
 	return out

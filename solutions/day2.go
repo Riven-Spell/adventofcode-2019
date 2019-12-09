@@ -2,6 +2,7 @@ package solutions
 
 import (
 	"context"
+	"fmt"
 	"github.com/Virepri/adventofcode-2019/solutions/intcode"
 	"github.com/Virepri/adventofcode-2019/util"
 	"runtime"
@@ -13,33 +14,25 @@ type Day2Input struct{
 	intcode.VM
 	baseStr      string
 	CustNounVerb bool // Set to true during preparation, considered when running parts.
-	Noun int // Default set to 12
-	Verb int // Default set to 2
+	Noun int64 // Default set to 12
+	Verb int64 // Default set to 2
 }
 
 func (s *Day2Input) Prepare(input string) {
 	s.VM = intcode.VM{}
-	s.Memory = make(map[int]int)
+	s.Memory = make(map[int64]int64)
 	s.baseStr = input
 
 	for k,v := range strings.Split(input, ",") {
 		pi, err := strconv.ParseInt(v, 10, 64)
 		util.PanicIfErr(err)
 
-		s.Memory[k] = int(pi)
+		s.Memory[int64(k)] = pi
 	}
 
 	s.CustNounVerb = true
 	s.Noun = 12
 	s.Verb = 2
-}
-
-func (s *Day2Input) Add(from1, from2, to int) {
-	s.Memory[to] = s.Memory[from1] + s.Memory[from2]
-}
-
-func (s *Day2Input) Mul(from1, from2, to int) {
-	s.Memory[to] = s.Memory[from1] * s.Memory[from2]
 }
 
 func (s *Day2Input) Part1() string {
@@ -48,7 +41,7 @@ func (s *Day2Input) Part1() string {
 		s.Memory[2] = s.Verb
 	}
 
-	s.BlacklistedOps = map[int]bool{
+	s.BlacklistedOps = map[int64]bool{
 		3:true,
 		4:true,
 		5:true,
@@ -59,7 +52,7 @@ func (s *Day2Input) Part1() string {
 
 	s.Autorun()
 
-	return strconv.Itoa(s.Memory[0])
+	return fmt.Sprint(s.Memory[0])
 }
 
 func (s *Day2Input) Part2() string {
@@ -103,8 +96,8 @@ func (s *Day2Input) Part2() string {
 				in := Day2Input{}
 
 				in.Prepare(s.baseStr)
-				in.Noun = instruction.X
-				in.Verb = instruction.Y
+				in.Noun = int64(instruction.X)
+				in.Verb = int64(instruction.Y)
 
 				in.Part1()
 				if in.Memory[0] == 19690720 {

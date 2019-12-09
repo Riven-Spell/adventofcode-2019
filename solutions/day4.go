@@ -20,7 +20,7 @@ func (s *Day4Input) Prepare(input string) {
 	util.PanicIfErr(err)
 }
 
-func (s *Day4Input) IncrementCode(code []int) {
+func (s *Day4Input) IncrementCode(code []int64) {
 	code[len(code)-1]++
 
 	for i := len(code)-1; i >= 0; i-- {
@@ -33,8 +33,8 @@ func (s *Day4Input) IncrementCode(code []int) {
 	}
 }
 
-func (s *Day4Input) MakePerfect(code []int) {
-	highestDigit := 0
+func (s *Day4Input) MakePerfect(code []int64) {
+	highestDigit := int64(0)
 	location := 0
 	for k, v := range code {
 		if v > highestDigit {
@@ -52,9 +52,9 @@ func (s *Day4Input) MakePerfect(code []int) {
 	}
 }
 
-func (s *Day4Input) Verify(code []int, onlyTwo bool) bool {
-	highest := 0
-	last := -1
+func (s *Day4Input) Verify(code []int64, onlyTwo bool) bool {
+	highest := int64(0)
+	last := int64(-1)
 	double := false
 	runLength := 0
 	for _,v := range code {

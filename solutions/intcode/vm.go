@@ -6,15 +6,16 @@ import (
 )
 
 type VM struct {
-	PC             int
-	BlacklistedOps map[int]bool
-	Memory         map[int]int // This is actually just acting as an unbound array.
+	PC             int64
+	BlacklistedOps map[int64]bool
+	Memory         map[int64]int64 // This is actually just acting as an unbound array.
 	IoMgr          IoMgr
+	RelativeBase int64
 }
 
 // Reset fully resets the ioutil state-- be sure to replace it.
-func (v *VM) Reset(baseMem map[int]int) {
-	v.Memory = make(map[int]int)
+func (v *VM) Reset(baseMem map[int64]int64) {
+	v.Memory = make(map[int64]int64)
 	v.PC = 0
 	v.IoMgr = &PreparedIO{}
 
@@ -23,7 +24,7 @@ func (v *VM) Reset(baseMem map[int]int) {
 	}
 }
 
-func (v *VM) GetMemory(i int) int {
+func (v *VM) GetMemory(i int64) int64 {
 	if out, ok := v.Memory[i]; ok {
 		return out
 	} else {
@@ -31,8 +32,8 @@ func (v *VM) GetMemory(i int) int {
 	}
 }
 
-func (v *VM) GetMemoryRange(loc, length int) []int {
-	out := make([]int, 0)
+func (v *VM) GetMemoryRange(loc, length int64) []int64 {
+	out := make([]int64, 0)
 
 	for length > 0 {
 		out = append(out, v.GetMemory(loc))
@@ -44,12 +45,12 @@ func (v *VM) GetMemoryRange(loc, length int) []int {
 	return out
 }
 
-func (v *VM) GetArgs(argModes, args []int) []int {
+func (v *VM) GetArgs(argModes, defaultArgModes, args []int64) []int64 {
 	if len(argModes) != len(args) {
 		panic("argmodes must equal args")
 	}
 
-	out := make([]int, len(args))
+	out := make([]int64, len(args))
 
 	for k,arg := range args {
 		switch argModes[k] {
@@ -57,6 +58,12 @@ func (v *VM) GetArgs(argModes, args []int) []int {
 			out[k] = v.GetMemory(arg) // Despite output args NEVER being in position mode, we won't question it to save time, and just trust the input.
 		case 1: // Immediate mode
 			out[k] = arg
+		case 2: // Relative mode
+			if defaultArgModes[k] == 1 { // Support write-as-pointer
+				out[k] = v.RelativeBase + arg
+			} else {
+				out[k] = v.GetMemory(v.RelativeBase + arg)
+			}
 		}
 	}
 
@@ -67,7 +74,7 @@ func (v *VM) Autorun() {
 	for v.Step() {}
 }
 
-func (v *VM) AutorunWIndex(idx int) {
+func (v *VM) AutorunWIndex(idx int64) {
 	for v.Step() {
 		fmt.Println("VM ", idx, "is running", v.PC, v.Memory[v.PC])
 	}
@@ -76,22 +83,22 @@ func (v *VM) AutorunWIndex(idx int) {
 // False: Running still.
 // True: The VM has stopped.
 func (v *VM) Step() bool {
-	var argModes []int
-	var opCode int
+	var argModes []int64
+	var opCode int64
 	var o IntcodeOperation
 	var ok bool
 
 	if v.Memory[v.PC] > 99 {
 		// TODO: Cache these.
-		digs := util.ByDigit(int64(v.Memory[v.PC]))
+		digs := util.ByDigit(v.Memory[v.PC])
 		codeDiv := len(digs)-2
-		opCode = int(util.DigitsToInt(digs[codeDiv:]))
+		opCode = util.DigitsToInt(digs[codeDiv:])
 
 		o, ok = OperationMap[opCode]
 
 		// Copy the default arg mode so we don't overwrite it
 		overrideModes := digs[:codeDiv]
-		argModes = make([]int, len(o.DefaultArgMode))
+		argModes = make([]int64, len(o.DefaultArgMode))
 
 		copy(argModes, o.DefaultArgMode)
 		for x := len(overrideModes) - 1; x >= 0; x-- {
@@ -117,7 +124,7 @@ func (v *VM) Step() bool {
 		return false
 	}
 
-	args := v.GetArgs(argModes, v.GetMemoryRange(v.PC+1, o.ArgCount))
+	args := v.GetArgs(argModes, o.DefaultArgMode, v.GetMemoryRange(v.PC+1, o.ArgCount))
 
 	if o.F(args, v) {
 		v.PC += 1 + o.ArgCount

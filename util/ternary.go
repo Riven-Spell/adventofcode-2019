@@ -7,7 +7,7 @@ func TernaryString(condition bool, tval, fval string) string {
 	return fval
 }
 
-func TernaryInteger(condition bool, tval, fval int) int {
+func TernaryInt64(condition bool, tval, fval int64) int64 {
 	if condition {
 		return tval
 	}

@@ -12,25 +12,25 @@ import (
 )
 
 type Day7Input struct{
-	baseMem map[int]int
+	baseMem map[int64]int64
 }
 
 func (s *Day7Input) Prepare(input string) {
-	s.baseMem = make(map[int]int)
+	s.baseMem = make(map[int64]int64)
 
 	for k,v := range strings.Split(input, ",") {
 		pi, err := strconv.ParseInt(v, 10, 64)
 		util.PanicIfErr(err)
 
-		s.baseMem[k] = int(pi)
+		s.baseMem[int64(k)] = pi
 	}
 }
 
 func (s *Day7Input) Part1() string {
-	permutations := qp.GeneratePermutationsInt([]int{0,1,2,3,4})
+	permutations := qp.GeneratePermutationsInt64([]int64{0,1,2,3,4})
 	var wg sync.WaitGroup
 
-	var maxsig int
+	var maxsig int64
 	var mslock sync.Mutex
 
 	for i := runtime.NumCPU(); i > 0; i-- {
@@ -44,11 +44,11 @@ func (s *Day7Input) Part1() string {
 				}
 
 				vm := intcode.VM{}
-				sig := 0
+				sig := int64(0)
 				for _, phase := range perm {
 					vm.Reset(s.baseMem)
 					io := vm.IoMgr.(*intcode.PreparedIO) // Reset makes it
-					io.Stdin = []int{phase, sig}
+					io.Stdin = []int64{phase, sig}
 
 					vm.Autorun()
 
@@ -97,10 +97,10 @@ func (s *Day7Input) CreateVMPool() (handles []*intcode.VM) {
 }
 
 func (s *Day7Input) Part2() string {
-	permutations := qp.GeneratePermutationsInt([]int{5,6,7,8,9})
+	permutations := qp.GeneratePermutationsInt64([]int64{5,6,7,8,9})
 	var wg sync.WaitGroup
 
-	var maxsig int
+	var maxsig int64
 	var mslock sync.Mutex
 
 	for {
