@@ -13,3 +13,10 @@ func TernaryInt64(condition bool, tval, fval int64) int64 {
 	}
 	return fval
 }
+
+func TernaryFloat64(condition bool, tval, fval float64) float64 {
+	if condition {
+		return tval
+	}
+	return fval
+}

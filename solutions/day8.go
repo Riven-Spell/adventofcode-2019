@@ -20,9 +20,9 @@ func (s *Day8Input) Prepare(input string) {
 
 	layerSize := s.ImgSize.X * s.ImgSize.Y
 
-	s.Layers = make([]string, len(input)/layerSize)
+	s.Layers = make([]string, int64(len(input))/layerSize)
 
-	for i := 0; i < len(s.Layers); i++ {
+	for i := int64(0); i < int64(len(s.Layers)); i++ {
 		s.Layers[i] = input[i*layerSize:(i+1)*layerSize]
 	}
 }
@@ -58,7 +58,7 @@ func (s *Day8Input) Part1() string {
 	return fmt.Sprint(oneDigs * twoDigs)
 }
 
-func (s *Day8Input) CalculatePixel(pIdx int) rune {
+func (s *Day8Input) CalculatePixel(pIdx int64) rune {
 	// If you really sound the name of this variable out, it'll tell you exactly what this solution is
 	var cAnswer = '2'
 
@@ -80,10 +80,10 @@ func (s *Day8Input) CalculatePixel(pIdx int) rune {
 func (s *Day8Input) Part2() string {
 	output := make([][]rune, s.ImgSize.Y)
 
-	for y := 0; y < s.ImgSize.Y; y++ {
+	for y := int64(0); y < s.ImgSize.Y; y++ {
 		output[y] = make([]rune, s.ImgSize.X)
 
-		for x := 0; x < s.ImgSize.X; x++ {
+		for x := int64(0); x < s.ImgSize.X; x++ {
 			output[y][x] = s.CalculatePixel((y*s.ImgSize.X) + x)
 		}
 	}

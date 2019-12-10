@@ -1,6 +1,7 @@
 package solutions
 
 import (
+	"fmt"
 	"github.com/Virepri/adventofcode-2019/util"
 	"math"
 	"strconv"
@@ -84,7 +85,7 @@ func (s *Day3Input) Part1() string {
 		}
 	}
 
-	closestManhattan := math.MaxInt64
+	var closestManhattan int64 = math.MaxInt64
 	for _,v := range intersections {
 		m := util.Manhattan(util.Point{}, v)
 
@@ -93,7 +94,7 @@ func (s *Day3Input) Part1() string {
 		}
 	}
 
-	return strconv.Itoa(closestManhattan)
+	return fmt.Sprint(closestManhattan)
 }
 
 func (s *Day3Input) Part2() string {

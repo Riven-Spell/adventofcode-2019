@@ -62,7 +62,7 @@ func (s *Day2Input) Part2() string {
 	searchCtx, Canceller := context.WithCancel(context.Background())
 
 	go func() {
-		noun, verb := 0, 0
+		var noun, verb int64 = 0, 0
 
 		instructionChan <- util.Point{X: 0, Y: 0}
 
@@ -96,8 +96,8 @@ func (s *Day2Input) Part2() string {
 				in := Day2Input{}
 
 				in.Prepare(s.baseStr)
-				in.Noun = int64(instruction.X)
-				in.Verb = int64(instruction.Y)
+				in.Noun = instruction.X
+				in.Verb = instruction.Y
 
 				in.Part1()
 				if in.Memory[0] == 19690720 {
@@ -111,5 +111,5 @@ func (s *Day2Input) Part2() string {
 
 	<-searchCtx.Done()
 
-	return strconv.Itoa((100 * result.X) + result.Y)
+	return fmt.Sprint((100 * result.X) + result.Y)
 }
