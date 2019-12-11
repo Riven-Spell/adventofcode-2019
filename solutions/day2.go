@@ -62,6 +62,13 @@ func (s *Day2Input) Part2() string {
 	searchCtx, Canceller := context.WithCancel(context.Background())
 
 	go func() {
+		defer func(){
+			// This magic lives here to handle the channel closing.
+			// This isn't actually a bug, despite what Go would like to think.
+			// The channel is closed to terminate all of day 2.
+			recover()
+		}()
+
 		var noun, verb int64 = 0, 0
 
 		instructionChan <- util.Point{X: 0, Y: 0}
@@ -110,6 +117,7 @@ func (s *Day2Input) Part2() string {
 	}
 
 	<-searchCtx.Done()
+	close(instructionChan)
 
 	return fmt.Sprint((100 * result.X) + result.Y)
 }
