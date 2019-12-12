@@ -34,3 +34,14 @@ func GCD(x1, x2 int64) int64 {
 
 	return gcd
 }
+
+// find Least Common Multiple (LCM) via GCD
+func LCM(a, b int64, integers ...int64) int64 {
+	result := a * b / GCD(a, b)
+
+	for i := 0; i < len(integers); i++ {
+		result = LCM(result, integers[i])
+	}
+
+	return result
+}
