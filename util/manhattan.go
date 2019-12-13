@@ -12,6 +12,10 @@ func (p Point) Add(p2 Point) Point {
 	return Point{X: p2.X + p.X, Y: p2.Y + p.Y}
 }
 
+func (p Point) Sub(p2 Point) Point {
+	return Point{X: p.X - p2.X, Y: p.Y - p2.Y}
+}
+
 func Manhattan(p1, p2 Point) int64 {
 	return IntAbs(p2.X - p1.X) + IntAbs(p2.Y - p1.Y)
 }

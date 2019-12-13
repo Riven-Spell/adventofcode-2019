@@ -50,7 +50,9 @@ func (s *Day12Input) Prepare(input string) {
 	for _,v := range strings.Split(input, "\n") {
 		moon := physicsObject{}
 		_, err := fmt.Sscanf(strings.TrimSpace(v), "<x=%d, y=%d, z=%d>", &moon.Position.X, &moon.Position.Y, &moon.Position.Z)
-		util.PanicIfErr(err)
+		if err != nil {
+			continue // Ignore the line, it's rubbish.
+		}
 
 		s.moons = append(s.moons, moon)
 	}
