@@ -29,7 +29,7 @@ func (s *Day11Input) Prepare(input string) {
 	}
 }
 
-func (s *Day11Input) Fuck(vm *intcode.VM, chio *intcode.ChanIO) {
+func (s *Day11Input) ExecuteVM(vm *intcode.VM, chio *intcode.ChanIO) {
 	fnSuicideChan := make(chan bool, 1)
 	currentPosition := util.Point{}
 	currentRotation := Up
@@ -90,7 +90,7 @@ func (s *Day11Input) Part1() string {
 	vm.IoMgr = chio
 
 	s.seenPoints[util.Point{}] = false
-	s.Fuck(&vm, chio)
+	s.ExecuteVM(&vm, chio)
 
 	return fmt.Sprint(len(s.seenPoints))
 }
@@ -102,7 +102,7 @@ func (s *Day11Input) Part2() string {
 	vm.IoMgr = chio
 
 	s.seenPoints[util.Point{}] = true
-	s.Fuck(&vm, chio)
+	s.ExecuteVM(&vm, chio)
 
 	getPanel := func(point util.Point) bool {
 		if pan, ok := s.seenPoints[point]; ok {
