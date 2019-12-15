@@ -133,9 +133,14 @@ func (s *Day14Input) Part1() string {
 	return fmt.Sprint(oreCount)
 }
 
-func (s *Day14Input) GenerateFuel(count int64) int64 {
+func (s *Day14Input) Part2() string {
+	target := int64(1000000000000)
+
 	eQueue := make(chan elementAmount, 500)
 	oreCount := int64(0)
+	lastOreCount := int64(0)
+	fuelCount := int64(0)
+	fuelDiff := int64(1)
 	spares := make(map[string]int64)
 	reactions := s.Reactions
 
@@ -144,21 +149,57 @@ func (s *Day14Input) GenerateFuel(count int64) int64 {
 	}
 
 	eQueue <- elementAmount{
-		count:   count,
+		count:   1,
 		element: "FUEL",
 	}
 
 	for {
 		var x elementAmount
-		var toBreak bool
 		select {
 		case x = <-eQueue:
 		default:
-			toBreak = true
-		}
+			// We'll accelerate pace depending on what we think of the current fueling rate.
+			// The idea being that as we approach our target closer and closer, we'll have a better and better idea of just how much fuel can be produced.
+			// The final run should be just one unit.
 
-		if toBreak {
-			break
+			fuelCount += fuelDiff
+			oreDiff := oreCount - lastOreCount
+			diffPerFuel := oreDiff / fuelDiff
+			lastOreCount = oreCount
+
+			// We now have an idea of our diff per fuel.
+			// You might be wondering why I left in these debug statements.
+			// The code actually runs twice as fast with them than without them... fucking somehow!?!!?
+			fmt.Println("Approximately", diffPerFuel, "ORE per FUEL")
+			fmt.Println(target - oreCount, "ore remaining", fuelCount, "fuel produced")
+
+			// Let's decide at what pace we can move at.
+			pace := (target - oreCount) / diffPerFuel
+
+			// There seems to be an upper and lower bound in terms of success with our back-off rate.
+			backOffRate := int64(2)
+
+			if pace < backOffRate {
+				fmt.Println("Expecting less fuel than our backoff rate.")
+				putElementInQueue(elementAmount{
+					count:   1,
+					element: "FUEL",
+				})
+
+				fuelDiff = 1
+				continue
+			}
+
+			fmt.Printf("(inferred %d FUEL prior to backoff), ", pace)
+			pace /= backOffRate
+			fmt.Printf("inferring %d FUEL remaining (((%d - %d) / %d) / %d)\n", pace, target, oreCount, diffPerFuel, backOffRate)
+
+			putElementInQueue(elementAmount{
+				count:   pace,
+				element: "FUEL",
+			})
+			fuelDiff = pace
+			continue
 		}
 
 		recipe, ok := reactions[x.element]
@@ -191,6 +232,10 @@ func (s *Day14Input) GenerateFuel(count int64) int64 {
 		for _, v := range recipe.reactants {
 			if v.element == "ORE" {
 				oreCount += v.count * mul
+
+				if oreCount > target {
+					return fmt.Sprint(fuelCount)
+				}
 				continue
 			}
 
@@ -204,37 +249,5 @@ func (s *Day14Input) GenerateFuel(count int64) int64 {
 
 		// Mark leftovers
 		spares[x.element] += ct - needed
-	}
-
-	return oreCount
-}
-
-func (s *Day14Input) Part2() string {
-	fmt.Println("Hold tight. Day 14 part 2 takes a long time. (Up to several minutes)")
-
-	lower := int64(0)
-	max := int64(1)
-	threshold := int64(1000000000000)
-
-	for s.GenerateFuel(max) < threshold {
-		max *= 2
-		fmt.Println("bumping max search to", max)
-	}
-	lower = max / 2
-
-	for {
-		if lower >= max {
-			return fmt.Sprint(lower - 1)
-		}
-
-		mid := (lower + max) / 2
-
-		fmt.Println("testing ", mid, "min:", lower, "max:", max)
-		result := s.GenerateFuel(mid)
-		if result > threshold {
-			max = mid
-		} else if result < threshold {
-			lower = mid + 1
-		}
 	}
 }
